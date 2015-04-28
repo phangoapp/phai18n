@@ -44,7 +44,7 @@ class I18n {
 		foreach($arg_list as $lang_file)
 		{
 		
-			$base_path=getcwd();
+			$base_path=getcwd().'/';
 
 			$module_path=$lang_file;
 				
@@ -83,18 +83,21 @@ class I18n {
 					$path=$base_path.'i18n/'.I18n::$language.'/';
 					$file_path=$base_path.'i18n/'.I18n::$language.'/'.$lang_file.'.php';
 				
-					if(!include($file_path)) 
+					if(is_file($file_path))
+					{
+						include($file_path);
+					}
+				
+					/*if(!include($file_path)) 
 					{
 						
 						throw new \Exception('Error cannot load the language file in '.$file_path);
 						
 						die;
 					
-					}
+					}*/
 
 				}
-				
-				//I18n::$l_[$lang_file]=new PhaLang($lang_file);
 
 				//ob_end_clean();
 
