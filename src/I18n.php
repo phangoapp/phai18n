@@ -63,11 +63,6 @@ class I18n {
 			{
 
 				//First search in module, after in root i18n.
-
-				//echo I18n::$base_path.'modules/'.$lang_file.'/i18n/'.I18n::$language.'/'.$lang_file.'.php';
-
-				//ob_start();
-				
 				
 				$path=$base_path.'/'.$module_path.'/i18n/'.I18n::$language.'/';
 				
@@ -87,15 +82,6 @@ class I18n {
 					{
 						include($file_path);
 					}
-				
-					/*if(!include($file_path)) 
-					{
-						
-						throw new \Exception('Error cannot load the language file in '.$file_path);
-						
-						die;
-					
-					}*/
 
 				}
 
