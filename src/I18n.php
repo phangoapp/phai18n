@@ -12,6 +12,10 @@ class I18n {
 	
 	static public $cache_lang=array();
 	
+	static public $base_path='';
+	
+	static public $modules_path='';
+	
 	static public function loadLang()
 	{
 	
@@ -44,7 +48,7 @@ class I18n {
 		foreach($arg_list as $lang_file)
 		{
 		
-			$base_path=getcwd().'/';
+			$base_path=I18n::$base_path;
 
 			$module_path=$lang_file;
 				
@@ -57,6 +61,8 @@ class I18n {
 
 				$module_path=$arr_path[0];
 				
+				$lang_file=$arr_path[1];
+				
 			}
 
 			if(!isset(I18n::$cache_lang[$lang_file]))
@@ -64,7 +70,7 @@ class I18n {
 
 				//First search in module, after in root i18n.
 				
-				$path=$base_path.'/'.$module_path.'/i18n/'.I18n::$language.'/';
+				$path=$base_path.I18n::$modules_path.'/'.$module_path.'/i18n/'.I18n::$language.'/';
 				
 				$file_path=$path.$lang_file.'.php';
 				
@@ -74,10 +80,11 @@ class I18n {
 				}
 				else
 				{
-
+					
 					$path=$base_path.'i18n/'.I18n::$language.'/';
+					
 					$file_path=$base_path.'i18n/'.I18n::$language.'/'.$lang_file.'.php';
-				
+					
 					if(is_file($file_path))
 					{
 						include($file_path);
