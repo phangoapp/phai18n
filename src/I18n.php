@@ -16,7 +16,7 @@ class I18n {
 	
 	static public $modules_path='';
 	
-	static public function loadLang()
+	static public function load_lang()
 	{
 	
 		if(isset($_SESSION['language']))
@@ -99,16 +99,6 @@ class I18n {
 			}
 
 		}
-	
-	}
-	
-	//Simple method used by aestetic.
-	
-	static public function load_lang()
-	{
-	
-		//I18n::loadLang(func_get_args());
-		call_user_func_array('I18n::loadLang', func_get_args());
 	
 	}
 	
