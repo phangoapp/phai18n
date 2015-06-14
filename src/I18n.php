@@ -44,7 +44,7 @@ class I18n {
 		}
 		
 		$arg_list = func_get_args();
-	
+		
 		foreach($arg_list as $lang_file)
 		{
 		
@@ -99,6 +99,16 @@ class I18n {
 			}
 
 		}
+	
+	}
+	
+	//Simple method used by aestetic.
+	
+	static public function load_lang()
+	{
+	
+		//I18n::loadLang(func_get_args());
+		call_user_func_array('I18n::loadLang', func_get_args());
 	
 	}
 	
