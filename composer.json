@@ -18,5 +18,6 @@
         "psr-4": {
             "PhangoApp\\PhaI18n\\": "src"
         }
-    }
+    },
+    "bin": ["bin/padmin"]
 }
