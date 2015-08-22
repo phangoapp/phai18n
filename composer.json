@@ -1,6 +1,6 @@
 {
     "name": "phangoapp/phai18n",
-    "description": "A simple class for create models",
+    "description": "A class for simple translations",
     "require-dev": {
         "phpunit/phpunit": "~4.8@dev"
     },
