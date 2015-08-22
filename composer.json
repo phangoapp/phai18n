@@ -19,5 +19,5 @@
             "PhangoApp\\PhaI18n\\": "src"
         }
     },
-    "bin": ["bin/padmin"]
+    "bin": ["bin/checklang"]
 }
