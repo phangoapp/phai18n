@@ -235,22 +235,22 @@ function check_i18n_file($file_path, $base_path)
 				if($yes_check_file==1)
 				{
 
-					if(file_exists($base_path.'/modules/'.$module_path))
+					if(file_exists($base_path.'/vendor/'.$module_path))
 					{
 
 						/*foreach(I18n::$arr_i18n as $lang_dir) 
 						{*/
 
-						if(!file_exists($base_path.'/modules/'.$module_path.'/i18n/'.$language)) 
+						if(!file_exists($base_path.'/vendor/'.$module_path.'/i18n/'.$language)) 
 						{
-							//echo $base_path.'/modules/'.$lang_file.'/i18n/'.$language;
-							mkdir($base_path.'/modules/'.$module_path.'/i18n/'.$language, 0755, true);
+							//echo $base_path.'/vendor/'.$lang_file.'/i18n/'.$language;
+							mkdir($base_path.'/vendor/'.$module_path.'/i18n/'.$language, 0755, true);
 
 						}
 
 						//}
 
-						$path_lang_file=$base_path.'/modules/'.$module_path.'/i18n/'.$language.'/'.$lang_file.'.php';
+						$path_lang_file=$base_path.'/vendor/'.$module_path.'/i18n/'.$language.'/'.$lang_file.'.php';
 
 					}
 					
