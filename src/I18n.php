@@ -52,19 +52,34 @@ class I18n {
 
 			$module_path=$lang_file;
 				
-			$pos=strpos($module_path, "/");
+			/*$pos=strpos($module_path, "/");
 			
 			if($pos!==false)
 			{
 
 				$arr_path=explode('/', $module_path);
 
-				$module_path=$arr_path[0];
+				$c=count($arr_path);
 				
-				$lang_file=$arr_path[1];
+				$module_path=implode('/', array_slice($arr_path, 0, $c-1));
 				
+				$lang_file=$arr_path[$c-1];
+				
+			}*/
+			
+			$c=substr_count($module_path, '/');
+			
+			if($c==2)
+			{
+			
+                $arr_path=explode('/', $module_path);
+			
+                $module_path=$arr_path[0].'/'.$arr_path[1];
+                
 			}
-
+			
+			$lang_file=basename($lang_file);
+			
 			if(!isset(I18n::$cache_lang[$lang_file]))
 			{
 
@@ -73,7 +88,7 @@ class I18n {
 				$path=$base_path.I18n::$modules_path.'/'.$module_path.'/i18n/'.I18n::$language.'/';
 				
 				$file_path=$path.$lang_file.'.php';
-				
+                
 				if(is_file($file_path))
 				{
 					include($file_path);
