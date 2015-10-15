@@ -266,9 +266,14 @@ function check_i18n_file($file_path, $base_path)
                     
                     //preg_match ( string $pattern , string $subject [, array &$matches [, int $flags = 0 [, int $offset = 0 ]]] )
                     
-					if(preg_match('/.*\/'.$module_path.'\/.*$/', $file_path) && preg_match ( '/\.\/vendor\/.*\/'.$module_path.'\/.*$/' , $file_path ))
+                    //preg_match('/.*\/'.$module_path.'\/.*$/', $file_path) && 
+                    
+                    //echo $file_path.": ".preg_match ( '/\.\/vendor\/\w+\/'.$module_path.'\/.*$/' , $file_path )."\n";
+                    
+					if(preg_match ( '/\.\/vendor\/\w+\/'.$module_path.'\/.*$/' , $file_path ))
 					{
-                        echo $file_path."\n";
+                        
+                        
                         $c_module=strlen($module_path)-1;
                         
                         //echo $file_path.':'.strpos('/'.$file_path.'/', $module_path)."\n";
