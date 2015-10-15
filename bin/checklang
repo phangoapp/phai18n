@@ -13,9 +13,11 @@ else
 
 use PhangoApp\PhaI18n\I18n;
 use PhangoApp\PhaUtils\Utils;
+use PhangoApp\PhaRouter\Routes;
 use League\CLImate\CLImate;
 
 Utils::load_config('config_i18n');
+Utils::load_config('config');
 
 $options=getopt('', array('module:all:'));
 
@@ -46,8 +48,8 @@ function checklangConsole($arr_options)
 	$i18n_dir='./i18n/';
 
 	//Creating language folders if exists...
-	/*var_dump($arr_options);
-	die;*/
+	
+	/*
 	if(isset($arr_options['status']))
 	{
 
@@ -91,10 +93,18 @@ function checklangConsole($arr_options)
 	}
 	else
 	{
+		//scan_directory('./', $base_path);
+		
+		foreach(Routes::$apps as $app)
+        {
+            
+            scan_directory('./vendor/'.$app.'/', './vendor/'.$app, 1);
+        
+        }
 
-		scan_directory('./', $base_path);
-
-	}
+	}*/
+	
+	scan_directory('./', $base_path);
 	
 }
 
@@ -126,15 +136,19 @@ function scan_directory($directory, $base_path)
 			
                 $base_file=basename($path_file);
 			
-				if(is_dir($path_file) && !preg_match("/^(.*)\.$/", $base_file) && !preg_match("/^\.(.*)$/", $base_file) && !preg_match ( '/(.*)vendor\/(.*)/' , $path_file )) 
+                // && !preg_match ( '/(.*)vendor\/(.*)/' , $path_file )
+			
+                $yes_scan=1;
+			
+				if(is_dir($path_file) && !preg_match("/^(.*)\.$/", $base_file) && !preg_match("/^\.(.*)$/", $base_file)) 
 				{
 					
-					echo "Checking directory ".$path_file.'/'.$file."...\n";
-					scan_directory($path_file.'/', $base_path);
+                    echo "Checking directory ".$path_file."...\n";
+                    scan_directory($path_file.'/', $base_path);
 					
 				}
 				else
-				if(preg_match("/.*\.php$/", $file) && $file!="controller_checklang.php" ) 
+				if(preg_match("/.*\.php$/", $file) && $file!="checklang" ) 
 				{
 	
 					echo "Checking file $path_file...\n";
@@ -235,27 +249,53 @@ function check_i18n_file($file_path, $base_path)
 				if($yes_check_file==1)
 				{
 
-					if(file_exists($base_path.'/vendor/'.$module_path))
+                    //First, check the path of file. 
+                    //If find $module_path in path into the vendor, the base path is this path since ./ to $module_path
+				
+                    /*$pos=strpos($file_path, $module_path);
+				
+                    if($pos!==false)
+                    {
+                    
+                        echo $pos.' pepepe';
+                    
+                    }*/
+				
+                    
+                    //file_exists($base_path.'/vendor/'.$module_path)
+                    
+                    //preg_match ( string $pattern , string $subject [, array &$matches [, int $flags = 0 [, int $offset = 0 ]]] )
+                    
+					if(preg_match('/.*\/'.$module_path.'\/.*$/', $file_path) && preg_match ( '/.*\/vendor\/.*/' , $file_path ))
 					{
-
-						/*foreach(I18n::$arr_i18n as $lang_dir) 
-						{*/
-
-						if(!file_exists($base_path.'/vendor/'.$module_path.'/i18n/'.$language)) 
+                        echo $file_path."\n";
+                        $c_module=strlen($module_path)-1;
+                        
+                        //echo $file_path.':'.strpos('/'.$file_path.'/', $module_path)."\n";
+                        
+                        $pos_path=strpos('/'.$file_path.'/', $module_path);
+                        
+                        $path_i18n=substr($file_path, 0, $c_module+$pos_path);
+                        
+                        echo $path_i18n.'/i18n/'.$language."\n";
+                        
+                        
+						if(!file_exists($path_i18n.'/i18n/'.$language)) 
 						{
 							//echo $base_path.'/vendor/'.$lang_file.'/i18n/'.$language;
-							mkdir($base_path.'/vendor/'.$module_path.'/i18n/'.$language, 0755, true);
+							mkdir($path_i18n.'/i18n/'.$language, 0755, true);
 
 						}
 
-						//}
-
-						$path_lang_file=$base_path.'/vendor/'.$module_path.'/i18n/'.$language.'/'.$lang_file.'.php';
-
+						$path_lang_file=$path_i18n.'/i18n/'.$language.'/'.$lang_file.'.php';
+                        
 					}
 					
-					include($path_lang_file);
-						
+					if(file_exists($path_lang_file))
+					{
+                        include($path_lang_file);
+					}
+					
 					//print_r($lang);
 						
 					$arr_file_lang=array("<?php\n\nuse PhangoApp\PhaI18n\I18n;\n\n");
