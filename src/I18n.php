@@ -92,6 +92,11 @@ class I18n {
 				if(is_file($file_path))
 				{
 					include($file_path);
+					
+					I18n::$cache_lang[$lang_file]=1;
+					
+					return true;
+					
 				}
 				else
 				{
@@ -103,17 +108,21 @@ class I18n {
 					if(is_file($file_path))
 					{
 						include($file_path);
+						
+						I18n::$cache_lang[$lang_file]=1;
+						
+						return true;
 					}
 
 				}
 
 				//ob_end_clean();
 
-				I18n::$cache_lang[$lang_file]=1;
-
 			}
 
 		}
+		
+		return false;
 	
 	}
 	
