@@ -22,15 +22,40 @@ class I18n {
 
 	static public $arr_i18n=array();
     
-    
+    /**
+    * Variable that define the default language used by Phango.
+    * 
+    */
 	
 	static public $language='';
+    
+    /**
+    * Variable where is saved the language files loaded for don't load again.
+    * 
+    */
 	
 	static public $cache_lang=array();
+    
+    /**
+    * Variable where is saved the base path of language files
+    * 
+    */
 	
 	static public $base_path='';
+    
+    /**
+    * Variable where modules path  is saved
+    * 
+    */
 	
 	static public $modules_path='';
+    
+    /**
+    * Method used for load language files. The argumentes is
+    * 
+    * @param string language_file You can put a series of language files in composer format. I mind, you can load a language file from vendor/phangoapp/admin/i18n/admin.php using  'phangoapp/admin' how argument
+    * 
+    */
 	
 	static public function load_lang()
 	{
@@ -142,6 +167,15 @@ class I18n {
 	
 	}
 	
+    /**
+    * Method for set a language string
+    * 
+    * @param string $app The composer module where the string is located.
+    * @param string $code_lang Unique code with the identified of this string lang
+    * @param string $default_lang The default string lang if the string of determined language doesn't exists
+    * 
+    */
+    
 	static public function lang($app, $code_lang, $default_lang) 
 	{
 
