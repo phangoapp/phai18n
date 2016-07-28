@@ -2,11 +2,27 @@
 
 namespace PhangoApp\PhaI18n;
 
+/**
+* This is a class for load  i18n files and define text language strings,
+*/
+
 class I18n {
+    
+    /**
+    * Static property that define an multidimensional array with language strings with two keys,the module of the language string (Example phangoapp/admin for module admin) and the unique key for the language string.
+    * 
+    */
 
 	static public $lang=array();
 
+    /**
+    * Array where the avaliable languages are defined. By default are es-ES and en-US.
+    *
+    */
+
 	static public $arr_i18n=array();
+    
+    
 	
 	static public $language='';
 	
