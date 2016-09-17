@@ -19,9 +19,115 @@ use League\CLImate\CLImate;
 Utils::load_config('config_i18n');
 Utils::load_config('config');
 
-$options=getopt('', array('module:all:'));
+$options=getopt('', array('module:','all'));
 
-checklangConsole($options);
+$climate = new League\CLImate\CLImate();
+
+if(!isset($options['module']) && !isset($options['all']))
+{
+    
+    $climate->white()->backgroundBlack()->out("Use: checklang [--all] [--module=module] [--status]");
+    $climate->white()->backgroundBlack()->out("If you use --module and --all together, the script use the --module option by default");
+    
+    die;
+    
+}
+
+if(isset($options['module']))
+{
+    
+    $arr_modules=[$options['module']];
+    
+    $dir_search='vendor/'.$module;
+    
+    if(is_dir($dir_search))
+    {
+        
+        $climate->white()->backgroundBlack()->out("Search in ".$dir_search);
+        
+    }
+    
+}
+else
+{
+    
+    //Search in vendor directories using composer.json
+    
+    $json_require=json_decode(file_get_contents('composer.json'), true);
+    
+    /*[ext-gd] => *
+    [ext-libxml] => *
+    [league/climate] => @stable
+    */
+    
+    foreach($json_require['require'] as $package => $version)
+    {
+     
+        if($package!='ext-gd' && $package!='ext-libxml' && $package!='league/climate')
+        {
+            
+            $path='vendor/'.$package;
+            
+            if(is_dir($path))
+            {
+                
+                //Scandir 
+                
+                scan_i18n($path);
+                
+            }
+            
+        }
+        
+    }
+    //Search in views
+    
+}
+
+function scan_i18n($path)
+{
+    
+    echo "Process directory ".$path."\n";
+    
+    $arr_folders=scandir($path);
+    
+    foreach($arr_folders as $file)
+    {
+        
+        $path_file=$path.'/'.$file;
+        
+        if(preg_match('/^.*\.php$/', $file) && is_file($path_file))
+        {
+    
+            echo "---Process File ".$path_file."\n";
+            $file=file_get_contents($path_file);
+            
+            
+            $pattern_file="|I18n::lang\('(.*)',\s+'(.*)',\s+'(.*)'\)?|U";
+    
+            if(preg_match_all ( $pattern_file, $file, $arr_match_lang, PREG_SET_ORDER)) 
+            {
+                
+                
+                
+            }
+            
+            
+        }
+        else
+        if(is_dir($path_file) && !preg_match('/^\..*$/', $file) && $file!='i18n')
+        {
+            
+            scan_i18n($path_file);
+            
+        }
+        
+    }
+    
+}
+
+
+//checklangConsole($options);
 
 function checklangConsole($arr_options)
 {
@@ -157,7 +263,7 @@ function scan_directory($directory, $base_path)
 
 					//First open file...
 					
-					check_i18n_file($directory.$file, $base_path);
+					//check_i18n_file($directory.$file, $base_path);
 
 				}
 
