@@ -77,12 +77,12 @@ class I18n {
 			}
 
 		}
-		else
+		/*else
 		{
 		
 			$_SESSION['language']=I18n::$language;
 		
-		}
+		}*/
 		
 		$arg_list = func_get_args();
 		
