@@ -40,12 +40,14 @@ if(isset($options['module']))
     
     $arr_modules=[$options['module']];
     
-    $dir_search='vendor/'.$module;
+    $dir_search='vendor/'.$options['module'];
     
     if(is_dir($dir_search))
     {
         
         $climate->white()->backgroundBlack()->out("Search in ".$dir_search);
+        
+        scan_i18n($dir_search);
         
     }
     
@@ -53,80 +55,113 @@ if(isset($options['module']))
 else
 {
     
-    //Search in vendor directories using composer.json
-    
-    $json_require=json_decode(file_get_contents('composer.json'), true);
-    
-    /*[ext-gd] => *
-    [ext-libxml] => *
-    [league/climate] => @stable
-    */
-    
-    foreach($json_require['require'] as $package => $version)
+//Search in vendor directories using composer.json
+
+$json_require=json_decode(file_get_contents('composer.json'), true);
+
+/*[ext-gd] => *
+[ext-libxml] => *
+[league/climate] => @stable
+*/
+
+foreach($json_require['require'] as $package => $version)
+{
+ 
+    if($package!='ext-gd' && $package!='ext-libxml' && $package!='league/climate')
     {
-     
-        if($package!='ext-gd' && $package!='ext-libxml' && $package!='league/climate')
+        
+        $path='vendor/'.$package;
+        
+        if(is_dir($path))
         {
             
-            $path='vendor/'.$package;
+            //Scandir 
             
-            if(is_dir($path))
-            {
-                
-                //Scandir 
-                
-                scan_i18n($path);
-                
-            }
+            scan_i18n($path);
             
         }
         
     }
-    //Search in views
     
-    $climate->white()->backgroundBlack()->out('Writing I18n files...');
+}
+
+}
+
+//Search in views
+
+$climate->white()->backgroundBlack()->out('Writing I18n files...');
+
+foreach($arr_lang as $module_lang => $codelang)
+{
     
-    foreach($arr_lang as $module_lang => $codelang)
+    foreach(I18n::$arr_i18n as $i18n)
     {
         
-        foreach(I18n::$arr_i18n as $i18n)
+        $arr_path=explode('/', $module_lang);
+        
+        if(count($arr_path)==1)
         {
             
-            $arr_path=explode('/', $module_lang);
+            $file_path='i18n/'.$i18n.'/'.$module_lang.'.php';
+            $dir_path='i18n/'.$i18n;
             
-            if(count($arr_path)==1)
+        }
+        else
+        if(count($arr_path)==2)
+        {
+            
+            $file_path=I18n::$modules_path.'/'.$module_lang.'/i18n/'.$i18n.'/'.$arr_path[1].'.php';
+            $dir_path=I18n::$modules_path.'/'.$module_lang.'/i18n/'.$i18n;
+            
+        }
+        else
+        if(count($arr_path)==3)
+        {
+            
+            $file_path=I18n::$modules_path.'/'.$module_lang.'/i18n/'.$i18n.'/'.$arr_path[2].'.php';
+            $dir_path=I18n::$modules_path.'/'.$module_lang.'/i18n/'.$i18n;
+            
+        }
+        
+        if(!is_dir($dir_path))
+        {
+            
+            mkdir($dir_path, 0755, true);
+            
+        }
+        
+        if(!is_file($file_path))
+        {
+            
+            $file_i18n="<?php\n\n";
+            $file_i18n.="use PhangoApp\PhaI18n\I18n;\n\n";
+            
+            foreach($arr_lang[$module_lang] as $code => $l)
             {
+             
+                //$l=str_replace("'", '&apos;', $l);
                 
-                $file_path='i18n/'.$i18n.'/'.$module_lang.'.php';
-                $dir_path='i18n/'.$i18n;
-                
-            }
-            else
-            if(count($arr_path)==2)
-            {
-                
-                $file_path=I18n::$modules_path.'/'.$module_lang.'/i18n/'.$i18n.'/'.$arr_path[1].'.php';
-                $dir_path=I18n::$modules_path.'/'.$module_lang.'/i18n/'.$i18n;
-                
-            }
-            else
-            if(count($arr_path)==3)
-            {
-                
-                $file_path=I18n::$modules_path.'/'.$module_lang.'/i18n/'.$i18n.'/'.$arr_path[2].'.php';
-                $dir_path=I18n::$modules_path.'/'.$module_lang.'/i18n/'.$i18n;
+                $file_i18n.="I18n::\$lang['${module_lang}']['${code}']='${l}';\n\n";
                 
             }
             
-            if(!is_dir($dir_path))
+            if(file_put_contents($file_path, $file_i18n))
             {
                 
-                mkdir($dir_path, 0755, true);
+                $climate->white()->backgroundBlack()->out('--Writed '.$file_path.' file');
                 
             }
             
-            if(!is_file($file_path))
+        }
+        else
+        {
+            
+            include($file_path);
+            
+            if(count(I18n::$lang[$module_lang])<>count($arr_lang[$module_lang]))
             {
+                
+                $climate->white()->backgroundBlack()->out('Updating lang file '.$file_path.'...');
                 
                 $file_i18n="<?php\n\n";
                 $file_i18n.="use PhangoApp\PhaI18n\I18n;\n\n";
@@ -136,66 +171,34 @@ else
                  
                     //$l=str_replace("'", '&apos;', $l);
                     
-                    $file_i18n.="I18n::\$lang['${module_lang}']['${code}']='${l}';\n\n";
+                    if(!isset(I18n::$lang[$module_lang][$code]))
+                    {
+                    
+                        $file_i18n.="I18n::\$lang['${module_lang}']['${code}']='${l}';\n\n";
+                        
+                    }
+                    else
+                    {
+                        
+                        $l=I18n::$lang[$module_lang][$code];
+                        
+                        $file_i18n.="I18n::\$lang['${module_lang}']['${code}']='${l}';\n\n";
+                        
+                    }
                     
                 }
                 
                 if(file_put_contents($file_path, $file_i18n))
                 {
                     
-                    $climate->white()->backgroundBlack()->out('--Writed '.$file_path.' file');
+                    $climate->white()->backgroundBlack()->out('--Updated '.$file_path.' file');
                     
                 }
                 
             }
-            else
-            {
-                
-                include($file_path);
-                
-                if(count(I18n::$lang[$module_lang])<>count($arr_lang[$module_lang]))
-                {
-                    
-                    $climate->white()->backgroundBlack()->out('Updating lang file '.$file_path.'...');
-                    
-                    $file_i18n="<?php\n\n";
-                    $file_i18n.="use PhangoApp\PhaI18n\I18n;\n\n";
-                    
-                    foreach($arr_lang[$module_lang] as $code => $l)
-                    {
-                     
-                        //$l=str_replace("'", '&apos;', $l);
-                        
-                        if(!isset(I18n::$lang[$module_lang][$code]))
-                        {
-                        
-                            $file_i18n.="I18n::\$lang['${module_lang}']['${code}']='${l}';\n\n";
-                            
-                        }
-                        else
-                        {
-                            
-                            $l=I18n::$lang[$module_lang][$code];
-                            
-                            $file_i18n.="I18n::\$lang['${module_lang}']['${code}']='${l}';\n\n";
-                            
-                        }
-                        
-                    }
-                    
-                    if(file_put_contents($file_path, $file_i18n))
-                    {
-                        
-                        $climate->white()->backgroundBlack()->out('--Updated '.$file_path.' file');
-                        
-                    }
-                    
-                }
-                
-            }
-            //$file_path=I18n::$modules_path.'/'.$module_lang.'/;
             
         }
+        //$file_path=I18n::$modules_path.'/'.$module_lang.'/;
         
     }
     
